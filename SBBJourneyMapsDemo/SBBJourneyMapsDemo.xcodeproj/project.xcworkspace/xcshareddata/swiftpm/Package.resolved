@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "mobile-ios-design-swiftui",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SchweizerischeBundesbahnen/mobile-ios-design-swiftui.git",
+      "state" : {
+        "revision" : "8105187e250d286b4f6901cded52b6ce62a822a4",
+        "version" : "1.2.6"
+      }
+    }
+  ],
+  "version" : 2
+}
