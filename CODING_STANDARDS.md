@@ -1,22 +1,24 @@
-> **Note:** This is a template. Please make necessary changes and modify the template as per your needs. For reference please use the following resources.
-
 # Repository Coding Standards
 
-The purpose of the Coding Standards is to create a baseline for collaboration and review within various aspects of our open source project and community, from core code to themes to plugins.
+## Swift Conventions
+- **Indentation:** 4-space indentation.
+- **Syntax:** Prefer `async/await` over completion handlers; use `struct` for models.
+- **Formatting:** No manual wrapping of long lines; rely on Xcode indentation 'Ctrl-i', or format File 'Ctrl-Shift-i', or swift-format.
+- **Method Braces:** Open on the same line, close on a new line.
 
-Coding standards help avoid common coding errors, improve the readability of code, and simplify modification. They ensure that files within the project appear as if they were created by a single common unit.
+## Architecture & UI
+- **Pattern:** Use MVVM (Model-View-ViewModel) with SwiftUI.
+- **Views:** Keep Views declarative and thin. Move logic to ViewModels.
+- **Components:** Default to small, focused components rather than "God Views".
+- **API Design:** Use [Swift API Design Guidelines](https://www.swift.org/documentation/api-design-guidelines/)
 
-Following the standards means anyone will be able to understand a section of code and modify it, if needed, without regard to when it was written or by whom.
+## Testing
+- **Framework:** Use `Swift Testing` for new logic.
+- **Coverage:** Write unit tests for all ViewModels and business logic.
 
-If you are planning to contribute, you need to familiarize yourself with these standards, as any code you submit will need to comply with them.
+## Dependency & Constraints
+- **Package Manager:** Use Swift Package Manager (SPM).
+- **License:** No GPL licensed components allowed; restrict to MIT/BSD.
 
-## Language-specific Standards
-* Language 1
-* Language 2
-
-## Tool-specific Settings
-* Tool 1 settings
-* Tool 2 settings
-
-For reference please check the following repos:
-* https://github.com/sbb-design-systems/sbb-angular/blob/main/CODING_STANDARDS.md
+## Git & Commits
+- **Messages:** Use descriptive messages, e.g., "Fix crash on login".
