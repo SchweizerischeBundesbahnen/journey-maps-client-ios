@@ -312,4 +312,4 @@ This repository includes a [CODING_STANDARDS.md](CODING_STANDARDS.md) file that 
 
 ## Code of Conduct
 
-To ensure that your project is a welcoming and inclusive environment for all contributors, you should establish a good [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+This project follows a code of conduct to ensure a welcoming and inclusive environment for all contributors. See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for details.
