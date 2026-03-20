@@ -16,7 +16,7 @@ This package allows you to easily incorporate SBB styled maps into your iOS appl
 
 ## Introduction
 
-The package is meant as a client for the [Journey Maps API] and is based on the [MapLibre Native iOS] - solely for iOS.
+The package is meant as a client for the [Journey Maps Tiles API](https://developer.sbb.ch/apis/journey-maps-tiles) and is based on the [MapLibre Native iOS](https://github.com/maplibre/maplibre-native) - solely for iOS.
 
 <a id="Getting-Started"></a>
 
@@ -24,7 +24,7 @@ The package is meant as a client for the [Journey Maps API] and is based on the 
 
 ### Precondition
 
-In order to access styles and tile data, you need to register your application to the [Journey Maps Tiles API] to receive an API Key.
+In order to access styles and tile data, you need to register your application to the [Journey Maps Tiles API](https://developer.sbb.ch/apis/journey-maps-tiles) to receive an API Key.
 Create an account (e.g. using SwissPass Login) to be able to setup an application and then register this application to the API.
 You can get one by signing up on [developer.sbb.ch](https://developer.sbb.ch/apis/journey-maps-tiles/information).
 
@@ -294,25 +294,17 @@ Links to all relevant documentation files, including:
 
 ## License
 
-> Choose a license that meets the organization's legal requirements and supports the sharing and modification of the code.
-> Please follow the internal Open Source guidelines while chosing the License.
-> This repository includes two [suggested license texts](./suggested_licenses) (Apache 2.0 and EPL 2.0). Rename the license you prefer to [LICENSE.md](LICENSE.md) and remove the other one.
-
-This project is licensed under [INSERT LICENSE].
+This project is licensed under [MIT](LICENSE.md).
 
 <a id="Contributing"></a>
 
 ## Contributing
-
-Open-source projects thrive on collaboration and contributions from the community. To encourage others to contribute to your project, you should provide clear guidelines on how to get involved.
 
 This repository includes a [CONTRIBUTING.md](CONTRIBUTING.md) file that outlines how to contribute to the project, including how to submit bug reports, feature requests, and pull requests.
 
 <a id="coding-standards"></a>
 
 ## Coding Standards
-
-To maintain a high level of code quality and consistency across your project, you should establish coding standards that all contributors should follow.
 
 This repository includes a [CODING_STANDARDS.md](CODING_STANDARDS.md) file that outlines the coding standards that you should follow when contributing to the project.
 
