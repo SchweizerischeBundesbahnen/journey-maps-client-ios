@@ -109,6 +109,7 @@
 				2DCEC7192B3490CC00A20DFB /* Sources */,
 				2DCEC71A2B3490CC00A20DFB /* Frameworks */,
 				2DCEC71B2B3490CC00A20DFB /* Resources */,
+				2DAB5FB72FA4EC7400FDF935 /* Copy Local API Key if exists */,
 			);
 			buildRules = (
 			);
@@ -171,6 +172,29 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		2DAB5FB72FA4EC7400FDF935 /* Copy Local API Key if exists */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/SBBJourneyMapsDemo/IgnoredInfo.plist",
+				"$(BUILT_PRODUCTS_DIR)/SBBJourneyMapsDemo.app/Info.plist",
+			);
+			name = "Copy Local API Key if exists";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# For local development, you can put the API Key inside a IgnoredInfo.plist file that should not be commited to source control!\nIGNOREDINFO_PLIST=\"$SRCROOT/SBBJourneyMapsDemo/IgnoredInfo.plist\"\nINFO_PLIST=\"$BUILT_PRODUCTS_DIR/SBBJourneyMapsDemo.app/Info.plist\"\n# Ensure the file exists\nif [  -f \"$IGNOREDINFO_PLIST\" ]; then\n    # Set the API_KEY entry\n    JOURNEYMAPS_API_KEY=$(/usr/libexec/PlistBuddy -c \"Print :JOURNEYMAPS_API_KEY\" \"$IGNOREDINFO_PLIST\")\n    \n    /usr/libexec/PlistBuddy -c \"Set :JOURNEYMAPS_API_KEY $JOURNEYMAPS_API_KEY\" \"$INFO_PLIST\" || \\\n    /usr/libexec/PlistBuddy -c \"Add :JOURNEYMAPS_API_KEY string $JOURNEYMAPS_API_KEY\" \"$INFO_PLIST\"\n\n    echo \"Injected JOURNEYMAPS_API_KEY key into Info.plist $INFO_PLIST\"\nfi\n\n\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		2DCEC7192B3490CC00A20DFB /* Sources */ = {
@@ -325,6 +349,7 @@
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = ZB8B4MY472;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SBBJourneyMapsDemo/Info.plist;
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This is a Demo App";
