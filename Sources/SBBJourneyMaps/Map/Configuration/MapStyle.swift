@@ -5,9 +5,9 @@
 import Foundation
 
 struct MapStyle {
-    private let journeyMapsBaseBrightStyle = "https://journey-maps-tiles.api.sbb.ch:443/styles/journey_maps_bright_v1/style.json?api_key="
-    private let journeyMapsBaseDarkStyle = "https://journey-maps-tiles.api.sbb.ch/styles/journey_maps_dark_v1/style.json?api_key="
-    private let journeyMapsAerialStyle = "https://journey-maps-tiles.api.sbb.ch:443/styles/journey_maps_aerial_v1/style.json?api_key="
+    private let journeyMapsBaseBrightStyle = "https://journey-maps-tiles.api.sbb.ch:443/styles/sbbmaps_bright/style.json?api_key="
+    private let journeyMapsBaseDarkStyle = "https://journey-maps-tiles.api.sbb.ch/styles/sbbmaps_dark/style.json?api_key="
+    private let journeyMapsAerialStyle = "https://journey-maps-tiles.api.sbb.ch:443/styles/sbbmaps_aerial/style.json?api_key="
 
     let mapApiKey: String
 
