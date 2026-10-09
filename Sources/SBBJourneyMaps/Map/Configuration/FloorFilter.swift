@@ -26,7 +26,8 @@ struct FloorFilter {
         allLvlLayers.forEach { layer in
             if let vectLayer = layer as? MLNVectorStyleLayer {
                 let oldFilter = vectLayer.predicate?.mgl_jsonExpressionObject
-                let newFilter = calculateLayerFilter(oldFilter: oldFilter as? [Any], level: newLevel)
+                let newFilter = replaceLayerAndFloorFilter(of: oldFilter as? [Any], withLevel: newLevel)
+                
                 if !newFilter.isEmpty {
                     let pred = NSPredicate(mglJSONObject: newFilter)
                     vectLayer.predicate = pred
@@ -34,69 +35,70 @@ struct FloorFilter {
             }
         }
     }
-
-    static private func calculateLayerFilter(oldFilter: [Any]?, level: Int) -> [Any] {
+    
+    /// Replaces layer and floor/level filter criteria within a MapLibre JSON filter expression with a specified target level.
+    ///
+    /// e.g. replaces floor leve 0 to 1 to expressions such as
+    ///
+    /// ["==",["get","level"],0]
+    ///
+    /// -> ["==",["get","level"],1]
+    ///
+    /// ["==",["case",["==",["has","level"],true],["get","level"],0],0]
+    ///
+    /// -> ["==",["case",["==",["has","level"],true],["get","level"],0],1]
+    ///
+    /// ["all",["==",["get","type"],"platform"],["==",["case",["==",["has","floor"],true],["get","floor"],0],0]]
+    ///
+    /// -> ["all",["==",["get","type"],"platform"],["==",["case",["==",["has","floor"],true],["get","floor"],0],1]]
+    ///
+    /// - Parameters:
+    ///   - oldFilter: An optional MapLibre filter expression array (`[Any]`), or `nil` if no filter is set.
+    ///   - level: The target level number to apply to the filter.
+    /// - Returns: A new filter expression array with the updated floor level, or an empty array if `oldFilter` is `nil` or empty.
+    static private func replaceLayerAndFloorFilter(of oldFilter: [Any]?, withLevel level: Int) -> [Any] {
         guard let oldFilter, !oldFilter.isEmpty else {
             return []
         }
-
-        var newFilter: [Any] = []
-        newFilter.append(oldFilter.first!)
-
-        var floorFound = false
-
-        for i in 1...oldFilter.count - 1 {
-            if let item = oldFilter[i] as? String, isFloorFilter(innerPartString: item) {
-                // "floor" in "rokas_indoor" and "geojson_walk" layers
-                floorFound = true
-                newFilter.append(item)
-            } else if let item = oldFilter[i] as? [Any], !item.isEmpty {
-                var levelFound = false
-                var newInnerPart = [item.first!]
-
-                for j in 1...item.count - 1 {
-                    let innerPart = item[j]
-                    let innerPartString = jsonEncode(input: innerPart)
-                    if isCaseLvlFilter(innerPartString: innerPartString) {
-                        levelFound = true
-                        newInnerPart.append(innerPart)
-                    } else if isFloorFilter(innerPartString: innerPartString) {
-                        levelFound = true
-                        // when filter: ['==', ['get','floor'], 0]
-                        floorFound = true
-                        newInnerPart.append(innerPart)
-                    } else if levelFound {
-                        levelFound = false
-                        newInnerPart.append(level)
-                    } else {
-                        newInnerPart.append(innerPart)
-                    }
+        return replaceLayerAndFloorFilter(of: oldFilter, withLevel: level)
+    }
+    
+    /// Recursively traverses and updates subexpressions in a MapLibre JSON filter expression with a specified target level.
+    ///
+    /// - Parameters:
+    ///   - filterExpression: The MapLibre filter expression array (`[Any]`) to evaluate.
+    ///   - level: The target level number to apply to floor/level comparison expressions.
+    /// - Returns: The updated filter expression array.
+    static private func replaceLayerAndFloorFilter(of filterExpression: [Any], withLevel level: Int) -> [Any] {
+        guard !filterExpression.isEmpty else {
+            return []
+        }
+        
+        if let firstExpresison = filterExpression.first as? String {
+            switch firstExpresison.lowercased() {
+            case "all", "any":
+                // there are subexpressions, recursively iterate trough them
+                if let subexpressions = Array(filterExpression[1...]) as? [[Any]] {
+                    let newExp = subexpressions.map({replaceLayerAndFloorFilter(of: $0, withLevel: level)})
+                    return [firstExpresison] + newExp
                 }
-                newFilter.append(newInnerPart)
-            } else if floorFound {
-                floorFound = false
-                newFilter.append(level)
-            } else {
-                newFilter.append(oldFilter[i])
+                return [firstExpresison]
+            case "==":
+                guard filterExpression.count == 3, let secondExpression = filterExpression[1] as? [Any] else {
+                    return filterExpression
+                }
+                
+                let expressionString = MapLibreUtils.jsonString(from: secondExpression)
+                if isGetLevelFilter(innerPartString: expressionString) || isCaseLvlFilter(innerPartString: expressionString) || isCaseFloorFilter(innerPartString: expressionString) {
+                    return [filterExpression[0], filterExpression[1], level]
+                }
+            default:
+                return filterExpression
             }
         }
-
-        return newFilter
+        return filterExpression
     }
-
-    static private func jsonEncode(input: Any) -> String {
-        if let str = input as? String {
-            return str
-        }
-        if let str = input as? Int {
-            return "\(str)"
-        }
-        if let data = try? JSONSerialization.data(withJSONObject: input, options: []) {
-            return String(data: data, encoding: String.Encoding.utf8) ?? ""
-        }
-        return ""
-    }
-
+    
     static private func isCaseLvlFilter(innerPartString: String) -> Bool {
         let filterString =
             """
@@ -104,8 +106,20 @@ struct FloorFilter {
             """
         return innerPartString.hasPrefix(filterString)
     }
-
-    static private func isFloorFilter(innerPartString: String) -> Bool {
-        return innerPartString.contains("floor")
+    
+    static private func isCaseFloorFilter(innerPartString: String) -> Bool {
+        let filterString =
+            """
+            ["case",["==",["has","floor"],true],["get","floor"]
+            """
+        return innerPartString.hasPrefix(filterString)
+    }
+    
+    static private func isGetLevelFilter(innerPartString: String) -> Bool {
+        let filterString =
+            """
+            ["get","level"]
+            """
+        return innerPartString.hasPrefix(filterString)
     }
 }
