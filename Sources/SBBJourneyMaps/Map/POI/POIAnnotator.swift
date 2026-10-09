@@ -24,6 +24,15 @@ struct POIAnnotator {
         }
     }
     
+    /// Updates or inserts POI category filtering criteria into an existing MapLibre filter expression.
+    ///
+    /// If the expression already contains a `subCategory` filter, its category list is replaced.
+    /// Otherwise, a new `subCategory` filter clause is inserted into the expression.
+    ///
+    /// - Parameters:
+    ///   - filterExpression: The existing MapLibre filter expression as an array of JSON-serializable elements.
+    ///   - categories: The array of POI category identifier strings to filter by.
+    /// - Returns: An updated MapLibre filter expression array containing the specified POI categories.
     static private func setPoiCategories(of filterExpression: [Any], withCategories categories: [String]) -> [Any] {
         let filterExpressionString = MapLibreUtils.jsonString(from: filterExpression)
         if hasGetSubCategory(filterExpressionString) {

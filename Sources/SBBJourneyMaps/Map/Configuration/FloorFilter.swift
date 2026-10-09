@@ -36,6 +36,26 @@ struct FloorFilter {
         }
     }
     
+    /// Replaces layer and floor/level filter criteria within a MapLibre JSON filter expression with a specified target level.
+    ///
+    /// e.g. replaces floor leve 0 to 1 to expressions such as
+    ///
+    /// ["==",["get","level"],0]
+    ///
+    /// -> ["==",["get","level"],1]
+    ///
+    /// ["==",["case",["==",["has","level"],true],["get","level"],0],0]
+    ///
+    /// -> ["==",["case",["==",["has","level"],true],["get","level"],0],1]
+    ///
+    /// ["all",["==",["get","type"],"platform"],["==",["case",["==",["has","floor"],true],["get","floor"],0],0]]
+    ///
+    /// -> ["all",["==",["get","type"],"platform"],["==",["case",["==",["has","floor"],true],["get","floor"],0],1]]
+    ///
+    /// - Parameters:
+    ///   - oldFilter: An optional MapLibre filter expression array (`[Any]`), or `nil` if no filter is set.
+    ///   - level: The target level number to apply to the filter.
+    /// - Returns: A new filter expression array with the updated floor level, or an empty array if `oldFilter` is `nil` or empty.
     static private func replaceLayerAndFloorFilter(of oldFilter: [Any]?, withLevel level: Int) -> [Any] {
         guard let oldFilter, !oldFilter.isEmpty else {
             return []
@@ -43,6 +63,12 @@ struct FloorFilter {
         return replaceLayerAndFloorFilter(of: oldFilter, withLevel: level)
     }
     
+    /// Recursively traverses and updates subexpressions in a MapLibre JSON filter expression with a specified target level.
+    ///
+    /// - Parameters:
+    ///   - filterExpression: The MapLibre filter expression array (`[Any]`) to evaluate.
+    ///   - level: The target level number to apply to floor/level comparison expressions.
+    /// - Returns: The updated filter expression array.
     static private func replaceLayerAndFloorFilter(of filterExpression: [Any], withLevel level: Int) -> [Any] {
         guard !filterExpression.isEmpty else {
             return []
