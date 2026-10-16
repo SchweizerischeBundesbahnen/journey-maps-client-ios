@@ -1,5 +1,14 @@
 # Release Notes SBB Journey Maps Client
 
+## v1.5.1
+
+### Features
+- change SBB Map Styles for its Shortbread counterpart.
+- improve of the floor switcher logic
+    
+### Bugfixes 
+- POI Change now does not override the floor filter anymore
+
 ## v1.5.0
 ### Features
 - Style changes: The new default styles are: "journey_maps_bright_v1", "journey_maps_dark_v1" and "journey_maps_aerial_v1".
