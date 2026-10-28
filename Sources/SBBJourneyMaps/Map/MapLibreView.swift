@@ -242,6 +242,12 @@ struct MapLibreView: UIViewRepresentable {
     class Coordinator: NSObject, MLNMapViewDelegate {
         var parent: MapLibreView
 
+        /// Indicates whether the initial centering has already been performed.
+        /// This prevents re-centering to the default position when the style is
+        /// reloaded (e.g. when toggling the satellite style or switching dark mode),
+        /// which would otherwise reset the current zoom level and center.
+        private var hasPerformedInitialCentering = false
+
         init(_ control: MapLibreView) {
             self.parent = control
         }
@@ -280,13 +286,17 @@ struct MapLibreView: UIViewRepresentable {
 
         // MARK: Loading the map
         func mapView(_ mapView: MLNMapView, didFinishLoading style: MLNStyle) {
-            // initial centering
-            if let coordinate = self.parent.initialCenter?.coordinate, let zoomLevel = self.parent.initialCenter?.zoomLevel {
-                ZoomAndCenter.center(toPosition: coordinate, zoomLevel: zoomLevel, selectUnderlyingPoi: false, onMapView: mapView, callback: nil)
-            } else if let bboxSW = self.parent.initialCenter?.boundingBoxSW, let bboxNE = self.parent.initialCenter?.boundingBoxNE {
-                ZoomAndCenter.center(to: MLNCoordinateBounds(sw: bboxSW, ne: bboxNE), onMapView: mapView)
-            } else {
-                ZoomAndCenter.center(toPosition: self.parent.geographicalCenterCH, zoomLevel: 6, onMapView: mapView)
+            
+            // Only perform the initial centering on the very first style load.
+            if !hasPerformedInitialCentering {
+                hasPerformedInitialCentering = true
+                if let coordinate = self.parent.initialCenter?.coordinate, let zoomLevel = self.parent.initialCenter?.zoomLevel {
+                    ZoomAndCenter.center(toPosition: coordinate, zoomLevel: zoomLevel, selectUnderlyingPoi: false, onMapView: mapView, callback: nil)
+                } else if let bboxSW = self.parent.initialCenter?.boundingBoxSW, let bboxNE = self.parent.initialCenter?.boundingBoxNE {
+                    ZoomAndCenter.center(to: MLNCoordinateBounds(sw: bboxSW, ne: bboxNE), onMapView: mapView)
+                } else {
+                    ZoomAndCenter.center(toPosition: self.parent.geographicalCenterCH, zoomLevel: 6, onMapView: mapView)
+                }
             }
 
             self.parent.allLvlLayers = style.layers.filter({ $0.identifier.hasSuffix("-lvl") })
