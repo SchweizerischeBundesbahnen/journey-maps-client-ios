@@ -1,7 +1,10 @@
 # Release Notes SBB Journey Maps Client
 
-## v1.5.1
+## 1.5.2
+### Bugfixes 
+- Does not zoom back to whole Switzerland when switching to satelite mode.
 
+## v1.5.1
 ### Features
 - change SBB Map Styles for its Shortbread counterpart.
 - improve of the floor switcher logic
